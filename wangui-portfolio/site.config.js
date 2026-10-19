@@ -8,6 +8,11 @@ export default {
   siteUrl: "https://example.com", // replace with the real domain before deploying
   theme: { primary: "#11332B", accent: "#E4682E" },
   // Firebase web-app values (README step 1). Leave empty to preview with sample content.
-  firebase: { apiKey: "", authDomain: "", projectId: "", appId: "" },
+  firebase: {
+    apiKey: "AIzaSyAcMgqkL3T1yQ31yqX1ObXNfz3GC-y7TXQ",
+    projectId: "wangui-ngirici",
+    storageBucket: "wangui-ngirici.firebasestorage.app",
+    appId: "1:764407066670:web:830f60c120f97ff7506fbf",
+  },
   formspreeId: "",
 };
