@@ -1,0 +1,53 @@
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Seo from "../components/Seo";
+import WorkCard from "../components/WorkCard";
+import { useContent } from "../lib/contentContext";
+
+function Work() {
+  const { settings: s, displayName, projects } = useContent();
+  const [filter, setFilter] = useState("All");
+  const cats = useMemo(() => ["All", ...new Set(projects.map((p) => p.category).filter(Boolean))], [projects]);
+  const shown = filter === "All" ? projects : projects.filter((p) => p.category === filter);
+  const { hash } = useLocation();
+  // Arriving from a gallery photo (/work#project-...): scroll to that project and highlight it.
+  useEffect(() => {
+    if (!hash) return;
+    const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("is-target");
+    const t = setTimeout(() => el.classList.remove("is-target"), 2400);
+    return () => clearTimeout(t);
+  }, [hash, projects.length]);
+  return (
+    <>
+      <Seo title="Selected work" path="/work" description={`Projects, bills and community work delivered by ${displayName} in ${s.area}.`} />
+      <section className="page-head">
+        <div className="container">
+          <div className="eyebrow">THE RECORD</div>
+          <h1>Selected work</h1>
+          <p className="lead">Projects and legislation, with the result of each.</p>
+        </div>
+      </section>
+      <section className="section tight">
+        <div className="container">
+          {cats.length > 2 && (
+            <div className="filters" role="group" aria-label="Filter by category">
+              {cats.map((c) => (
+                <button key={c} type="button" className={`filter ${filter === c ? "is-active" : ""}`} aria-pressed={filter === c} onClick={() => setFilter(c)}>{c}</button>
+              ))}
+            </div>
+          )}
+          {shown.length ? (
+            <div className="card-grid">{shown.map((p) => <WorkCard key={p.id} project={p} />)}</div>
+          ) : (
+            <p className="empty">Projects will appear here soon.</p>
+          )}
+        </div>
+      </section>
+    </>
+  );
+}
+
+export default Work;
