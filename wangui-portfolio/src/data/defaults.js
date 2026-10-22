@@ -30,8 +30,8 @@ export const DEFAULT_SETTINGS = {
   ],
   career: [
     { years: "2026 \u2013 Present", role: "Aspirant for Governor, Kirinyaga County", org: "Democracy for Citizens Party (DCP)", note: "Announced her bid for the 2027 election at Kanjai, Ndia, on 29 April 2026." },
-    { years: "2023 \u2013 2026", role: "Chairperson, Board of Directors", org: "Kenya Seed Company Limited", note: "Elected chair of the board in 2023." },
-    { years: "2017 \u2013 2022", role: "Woman Representative, Kirinyaga County", org: "National Assembly of Kenya", note: "Elected in August 2017. Served on the Finance and Planning and Public Investments committees, and chaired the Kenya Women Parliamentary Association (KEWOPA)." },
+    { years: "2023 \u2013 2026", role: "Chairperson, Board of Directors", org: "Kenya Seed Company Limited", note: "Elected board chair in July 2023; served until April 2026." },
+    { years: "2017 \u2013 2022", role: "Woman Representative, Kirinyaga County", org: "National Assembly of Kenya", note: "Elected in August 2017. Served on the Finance and Planning and Public Investments committees, and chaired the Kenya Women Parliamentary Association (KEWOPA) 2017\u20132020." },
     { years: "2011 \u2013 Present", role: "Chief Executive Officer", org: "Ngirici and Sons Ltd", note: "" },
     { years: "2000 \u2013 Present", role: "Executive Director", org: "Joy Team Tyres and Half Moon Investments", note: "" },
     { years: "1999 \u2013 2000", role: "Sales Manager", org: "Tokyo, Japan", note: "" },
@@ -45,7 +45,7 @@ export const DEFAULT_SETTINGS = {
   committees: [
     "Departmental Committee on Finance and Planning (Member, 12th Parliament)",
     "Public Investments Committee (Member, 12th Parliament)",
-    "Kenya Women Parliamentary Association (Chairperson, from 2017)",
+    "Kenya Women Parliamentary Association (Chairperson, 2017\u20132020)",
   ],
   affiliations: [],
   careerIntro: "From business to the National Assembly, and now a bid to lead Kirinyaga County.",
@@ -58,7 +58,12 @@ export const DEFAULT_SETTINGS = {
     x: "https://x.com/WanguiNgirici",
     instagram: "",
     youtube: "",
+    tiktok: "",
+    linkedin: "",
+    threads: "",
+    whatsapp: "",
   },
+  links: [],
 };
 
 export const CATEGORIES = ["Women and youth", "Business and jobs", "Education", "Health", "Water and roads", "Legislation", "Community", "Other"];

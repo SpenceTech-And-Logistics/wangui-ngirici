@@ -1,19 +1,14 @@
 import site from "../../site.config.js";
 import { useState } from "react";
-import { FaFacebookF, FaInstagram, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { createElement } from "react";
 import Seo from "../components/Seo";
+import { activeSocials, otherLinks } from "../lib/socials";
 import { useContent } from "../lib/contentContext";
 import { isConfigured } from "../lib/firebase";
 import { sendMessage } from "../lib/store";
 
 const TOPICS = ["A question or idea", "Volunteering", "Invite to an event", "Media enquiry"];
-const SOCIALS = [
-  ["facebook", "Facebook", FaFacebookF],
-  ["x", "X", FaXTwitter],
-  ["instagram", "Instagram", FaInstagram],
-  ["youtube", "YouTube", FaYoutube],
-];
+
 const FORMSPREE = import.meta.env.VITE_FORMSPREE_ID || site.formspreeId;
 
 function Contact() {
@@ -51,7 +46,8 @@ function Contact() {
     }
   }
 
-  const socials = SOCIALS.filter(([k]) => settings.socials[k]);
+  const socials = activeSocials(settings);
+  const extra = otherLinks(settings);
 
   return (
     <>
@@ -92,14 +88,23 @@ function Contact() {
                 {[c.address, c.phone, c.email, c.hours].filter(Boolean).map((line, i) => <span key={i}>{line}<br /></span>)}
               </p>
             </div>
-            {socials.length > 0 && (
+            {(socials.length > 0 || extra.length > 0) && (
               <div className="card">
                 <h2>Follow</h2>
-                <div className="socials dark">
-                  {socials.map(([k, label, icon]) => (
-                    <a key={k} href={settings.socials[k]} target="_blank" rel="noopener noreferrer" aria-label={label}>{createElement(icon)}</a>
-                  ))}
-                </div>
+                {socials.length > 0 && (
+                  <div className="socials dark">
+                    {socials.map((p) => (
+                      <a key={p.key} href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.label} title={p.label}>{createElement(p.icon)}</a>
+                    ))}
+                  </div>
+                )}
+                {extra.length > 0 && (
+                  <ul className="other-links dark">
+                    {extra.map((l, i) => (
+                      <li key={i}><a href={l.url} target="_blank" rel="noopener noreferrer">{l.label} <span aria-hidden="true">&#8599;</span></a></li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
           </aside>

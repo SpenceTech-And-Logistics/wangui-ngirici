@@ -3,6 +3,7 @@ import Seo from "../components/Seo";
 import Photo from "../components/Photo";
 import WorkCard from "../components/WorkCard";
 import PressCard from "../components/PressCard";
+import { coverOf, isVideo } from "../lib/video";
 import { useContent } from "../lib/contentContext";
 
 function Home() {
@@ -68,7 +69,7 @@ function Home() {
             </div>
             <div className="mosaic">
               {gallery.slice(0, 5).map((g, i) => (
-                <figure key={g.id} className={`m${i}`}><Photo src={g.image} label="EVENT PHOTO" alt={g.caption} />{g.caption && <figcaption>{g.caption}</figcaption>}</figure>
+                <figure key={g.id} className={`m${i} ${isVideo(g) ? "is-video" : ""}`}><Photo src={coverOf(g)} label="EVENT PHOTO" alt={g.caption} />{isVideo(g) && <span className="play" aria-hidden="true" />}{g.caption && <figcaption>{g.caption}</figcaption>}</figure>
               ))}
             </div>
           </div>

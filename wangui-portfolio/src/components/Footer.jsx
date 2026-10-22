@@ -1,18 +1,12 @@
 import { createElement } from "react";
 import { Link } from "react-router-dom";
-import { FaFacebookF, FaInstagram, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { useContent } from "../lib/contentContext";
-
-const SOCIALS = [
-  ["facebook", "Facebook", FaFacebookF],
-  ["x", "X", FaXTwitter],
-  ["instagram", "Instagram", FaInstagram],
-  ["youtube", "YouTube", FaYoutube],
-];
+import { activeSocials, otherLinks } from "../lib/socials";
 
 function Footer() {
   const { settings, displayName } = useContent();
-  const links = SOCIALS.filter(([key]) => settings.socials[key]);
+  const links = activeSocials(settings);
+  const extra = otherLinks(settings);
   return (
     <footer className="footer">
       <div className="container footer-inner">
@@ -28,11 +22,22 @@ function Footer() {
           <Link to="/gallery">Gallery</Link>
           <Link to="/contact">Contact</Link>
         </nav>
-        {links.length > 0 && (
-          <div className="socials">
-            {links.map(([key, label, icon]) => (
-              <a key={key} href={settings.socials[key]} target="_blank" rel="noopener noreferrer" aria-label={label}>{createElement(icon)}</a>
-            ))}
+        {(links.length > 0 || extra.length > 0) && (
+          <div className="footer-social">
+            {links.length > 0 && (
+              <div className="socials">
+                {links.map((p) => (
+                  <a key={p.key} href={p.url} target="_blank" rel="noopener noreferrer" aria-label={p.label} title={p.label}>{createElement(p.icon)}</a>
+                ))}
+              </div>
+            )}
+            {extra.length > 0 && (
+              <ul className="other-links">
+                {extra.map((l, i) => (
+                  <li key={i}><a href={l.url} target="_blank" rel="noopener noreferrer">{l.label} <span aria-hidden="true">&#8599;</span></a></li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>

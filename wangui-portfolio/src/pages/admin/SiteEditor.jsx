@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useContent } from "../../lib/contentContext";
 import { saveSettings } from "../../lib/store";
 import ImageField from "./ImageField";
+import { SOCIALS } from "../../lib/socials";
 
 const lines = (text) => text.split("\n").map((s) => s.trim()).filter(Boolean);
 
@@ -165,12 +166,27 @@ function Editor({ initial }) {
           <Field label="Phone"><input value={s.contact.phone} onChange={(e) => setIn("contact", "phone", e.target.value)} maxLength={40} /></Field>
           <Field label="Email"><input type="email" value={s.contact.email} onChange={(e) => setIn("contact", "email", e.target.value)} maxLength={120} /></Field>
           <Field label="Opening hours" wide><input value={s.contact.hours} onChange={(e) => setIn("contact", "hours", e.target.value)} maxLength={120} /></Field>
-          {["facebook", "x", "instagram", "youtube"].map((k) => (
-            <Field key={k} label={`${k === "x" ? "X" : k[0].toUpperCase() + k.slice(1)} link`} hint="Leave empty to hide the icon.">
-              <input type="url" value={s.socials[k]} onChange={(e) => setIn("socials", k, e.target.value)} />
+          {SOCIALS.map((p) => (
+            <Field key={p.key} label={`${p.label} link`}>
+              <input type="url" value={s.socials[p.key] || ""} placeholder={p.placeholder} maxLength={400} onChange={(e) => setIn("socials", p.key, e.target.value)} />
             </Field>
           ))}
         </div>
+        <p className="admin-small">Each filled-in link shows as an icon in the footer and on the Contact page. Leave a box empty to hide that icon.</p>
+
+        <h3 className="admin-sub">Other links</h3>
+        <p className="admin-small">Any other page, with its own name: party website, Wikipedia, a blog, an organisation she leads. Shown under the icons.</p>
+        {s.links.map((l, i) => (
+          <fieldset className="admin-fieldset" key={i}>
+            <legend>Link {i + 1}</legend>
+            <div className="admin-grid">
+              <Field label="Name shown"><input value={l.label} placeholder="e.g. DCP party page" maxLength={60} onChange={(e) => setItem("links", i, "label", e.target.value)} /></Field>
+              <Field label="Link"><input type="url" value={l.url} placeholder="https://..." maxLength={400} onChange={(e) => setItem("links", i, "url", e.target.value)} /></Field>
+            </div>
+            <ItemTools group="links" i={i} />
+          </fieldset>
+        ))}
+        {s.links.length < 12 && <button type="button" className="admin-btn" onClick={() => addItem("links", { label: "", url: "" })}>+ Add link</button>}
       </div>
 
       <div className="admin-panel">

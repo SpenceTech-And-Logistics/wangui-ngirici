@@ -3,17 +3,27 @@ import Seo from "../components/Seo";
 import Photo from "../components/Photo";
 import Lightbox from "../components/Lightbox";
 import { useContent } from "../lib/contentContext";
+import { useGalleryItems } from "../lib/galleryItems";
+import { coverOf, isVideo } from "../lib/video";
 
 function Gallery() {
-  const { displayName, gallery } = useContent();
+  const { displayName } = useContent();
+  const gallery = useGalleryItems();
   const [filter, setFilter] = useState("All");
   const [open, setOpen] = useState(-1);
-  const albums = useMemo(() => ["All", ...new Set(gallery.map((g) => g.category).filter(Boolean))], [gallery]);
-  const shown = filter === "All" ? gallery : gallery.filter((g) => g.category === filter);
+  const hasVideo = gallery.some(isVideo);
+  const albums = useMemo(
+    () => ["All", ...(hasVideo ? ["Videos"] : []), ...new Set(gallery.map((g) => g.category).filter((c) => c && c !== "Videos"))],
+    [gallery, hasVideo]
+  );
+  const shown =
+    filter === "All" ? gallery
+    : filter === "Videos" ? gallery.filter(isVideo)
+    : gallery.filter((g) => g.category === filter);
   const move = useCallback((d) => setOpen((i) => (i + d + shown.length) % shown.length), [shown.length]);
   return (
     <>
-      <Seo title="Gallery" path="/gallery" description={`Photos from events, projects and community visits by ${displayName}.`} />
+      <Seo title="Gallery" path="/gallery" description={`Photos and videos from events, projects and community visits by ${displayName}.`} />
       <section className="page-head">
         <div className="container">
           <div className="eyebrow">IN PICTURES</div>
@@ -29,14 +39,19 @@ function Gallery() {
               ))}
             </div>
           )}
-          {shown.length === 0 && <p className="empty">Photos will appear here soon.</p>}
+          {shown.length === 0 && <p className="empty">Photos and videos will appear here soon.</p>}
           <div className="gallery" key={filter}>
-            {shown.map((g, i) => (
-              <button type="button" className="gallery-item" key={g.id} onClick={() => setOpen(i)} aria-label={`Open photo: ${g.caption || "gallery photo"}`}>
-                <Photo src={g.image} label="PHOTO" alt={g.caption} />
-                {g.caption && <span className="cap">{g.caption}</span>}
-              </button>
-            ))}
+            {shown.map((g, i) => {
+              const video = isVideo(g);
+              return (
+                <button type="button" className={`gallery-item ${video ? "is-video" : ""}`} key={g.id} onClick={() => setOpen(i)}
+                  aria-label={`${video ? "Play video" : "Open photo"}: ${g.caption || (video ? "gallery video" : "gallery photo")}`}>
+                  <Photo src={coverOf(g)} label={video ? "VIDEO" : "PHOTO"} alt={g.caption} />
+                  {video && <span className="play" aria-hidden="true" />}
+                  {g.caption && <span className="cap">{g.caption}</span>}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>

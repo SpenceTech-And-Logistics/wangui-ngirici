@@ -23,6 +23,14 @@ export async function saveItem(name, item) {
   return ref.id;
 }
 
+/* An ID for a record that is not saved yet, so photos can be linked to it while it is being written. */
+export const newId = (name) => doc(collection(db, name)).id;
+
+export async function createItem(name, id, data) {
+  await setDoc(doc(db, name, id), { ...data, createdAt: Date.now() });
+  return id;
+}
+
 export const removeItem = (name, id) => deleteDoc(doc(db, name, id));
 
 export const saveSettings = (settings) => setDoc(doc(db, "settings", "site"), settings);
@@ -55,4 +63,29 @@ export async function sendMessage(message) {
 export async function listMessages() {
   const snap = await getDocs(collection(db, "messages"));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/*
+  Bulk import (admin > Import). Firestore batches hold at most 500 writes,
+  so large lists are written in chunks.
+*/
+async function commitInChunks(ops) {
+  for (let i = 0; i < ops.length; i += 400) {
+    const batch = writeBatch(db);
+    ops.slice(i, i + 400).forEach((op) => op(batch));
+    await batch.commit();
+  }
+}
+
+export async function importItems(name, items, { replace = false, startOrder = 0 } = {}) {
+  const ops = [];
+  if (replace) {
+    const snap = await getDocs(collection(db, name));
+    snap.docs.forEach((d) => ops.push((b) => b.delete(d.ref)));
+  }
+  const now = Date.now();
+  items.forEach((item, i) => {
+    ops.push((b) => b.set(doc(collection(db, name)), { ...item, order: startOrder + i, createdAt: now + i }));
+  });
+  await commitInChunks(ops);
 }

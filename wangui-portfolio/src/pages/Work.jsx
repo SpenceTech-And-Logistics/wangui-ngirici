@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Seo from "../components/Seo";
 import WorkCard from "../components/WorkCard";
 import { useContent } from "../lib/contentContext";
@@ -8,6 +9,17 @@ function Work() {
   const [filter, setFilter] = useState("All");
   const cats = useMemo(() => ["All", ...new Set(projects.map((p) => p.category).filter(Boolean))], [projects]);
   const shown = filter === "All" ? projects : projects.filter((p) => p.category === filter);
+  const { hash } = useLocation();
+  // Arriving from a gallery photo (/work#project-...): scroll to that project and highlight it.
+  useEffect(() => {
+    if (!hash) return;
+    const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("is-target");
+    const t = setTimeout(() => el.classList.remove("is-target"), 2400);
+    return () => clearTimeout(t);
+  }, [hash, projects.length]);
   return (
     <>
       <Seo title="Selected work" path="/work" description={`Projects, bills and community work delivered by ${displayName} in ${s.area}.`} />

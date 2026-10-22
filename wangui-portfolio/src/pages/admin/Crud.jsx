@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useContent } from "../../lib/contentContext";
-import { removeItem, saveItem, saveOrder, seedSamples } from "../../lib/store";
+import { createItem, newId, removeItem, saveItem, saveOrder, seedSamples } from "../../lib/store";
+import LinkedPhotos from "./LinkedPhotos";
 import ImageField from "./ImageField";
 import { compressImage } from "../../lib/image";
 
@@ -16,19 +17,30 @@ function Crud({ name, title, intro, fields, describe, sortable = false, samples 
   const [error, setError] = useState("");
   const [progress, setProgress] = useState("");
 
-  const blank = () => Object.fromEntries(fields.map((f) => [f.key, f.default ?? ""]));
+  const hasPhotos = fields.some((f) => f.type === "photos");
+  // New records that can hold photos get their ID up front, so photos can be linked before the first save.
+  const blank = () => ({
+    ...Object.fromEntries(fields.filter((f) => f.type !== "photos").map((f) => [f.key, f.default ?? ""])),
+    ...(hasPhotos ? { _newId: newId(name) } : {}),
+  });
 
   async function onSave(e) {
     e.preventDefault();
+    const problem = fields.map((f) => f.validate?.(editing[f.key])).find(Boolean);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     setBusy(true);
     setError("");
     try {
-      const item = { ...editing };
+      const { _newId, ...item } = editing;
       if (!item.id && sortable) {
         const lowest = Math.min(0, ...items.map((i) => i.order ?? 0));
         item.order = lowest - 1; // new items go to the top
       }
-      await saveItem(name, item);
+      if (!item.id && _newId) await createItem(name, _newId, item);
+      else await saveItem(name, item);
       setEditing(null);
     } catch {
       setError("Could not save. Check your connection and that you are signed in as an administrator.");
@@ -110,6 +122,9 @@ function Crud({ name, title, intro, fields, describe, sortable = false, samples 
           <h2>{editing.id ? `Edit ${singular}` : `New ${singular}`}</h2>
           <div className="admin-grid">
             {fields.map((f) => {
+              if (f.type === "photos") {
+                return <LinkedPhotos key={f.key} projectId={editing.id || editing._newId} title={editing.title} />;
+              }
               if (f.type === "image") {
                 return <ImageField key={f.key} label={f.label} value={editing[f.key]} onChange={(v) => set(f.key, v)} maxSide={f.maxSide} />;
               }
@@ -120,7 +135,7 @@ function Crud({ name, title, intro, fields, describe, sortable = false, samples 
                     <textarea rows={4} value={editing[f.key] ?? ""} required={f.required} maxLength={f.max || 2000} onChange={(e) => set(f.key, e.target.value)} />
                   ) : f.type === "select" ? (
                     <select value={editing[f.key] ?? ""} onChange={(e) => set(f.key, e.target.value)}>
-                      {f.options.map((o) => <option key={o}>{o}</option>)}
+                      {f.options.map((o) => (typeof o === "string" ? <option key={o}>{o}</option> : <option key={o.value} value={o.value}>{o.label}</option>))}
                     </select>
                   ) : f.type === "combo" ? (
                     <>

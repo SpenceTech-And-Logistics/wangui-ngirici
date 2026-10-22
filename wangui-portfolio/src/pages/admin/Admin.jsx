@@ -45,7 +45,7 @@ function Admin() {
       <div className="admin-center">
         <div className="admin-card">
           <h1>Admin not connected yet</h1>
-          <p>Firebase has not been set up for this site. Follow the steps in README.md (section 1), add the four values to the <code>.env</code> file, and restart.</p>
+          <p>Firebase has not been set up for this site. Follow the steps in README.md (section 1), paste the four values into <code>firebase</code> in <code>site.config.js</code>, and restart <code>npm run dev</code>.</p>
         </div>
       </div>
     );
