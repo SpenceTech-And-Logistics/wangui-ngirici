@@ -29,23 +29,25 @@ export default function seoPlugin() {
       const area = site.area;
       const role = site.role;
       const intro = DEFAULT_SETTINGS.intro;
+      // "Former Woman Representative, Kirinyaga County" already names the county; do not repeat it.
+      const roleArea = role.includes(area) ? role : `${role}, ${area}`;
       const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
       const pages = [
-        { route: "/", title: `${name} | ${role}, ${area}`, desc: intro },
+        { route: "/", title: `${name} | ${roleArea}`, desc: intro },
         { route: "/work", title: `Selected work | ${name}`, desc: `Projects, bills and community work delivered by ${name} in ${area}.` },
         { route: "/career", title: `Career | ${name}`, desc: `The career of ${name}: public service, professional work and education.` },
         { route: "/vision", title: `Vision | ${name}`, desc: `${name}'s priorities for ${area}.` },
         { route: "/press", title: `Press | ${name}`, desc: `Articles, interviews, videos and statements featuring ${name}.` },
-        { route: "/gallery", title: `Gallery | ${name}`, desc: `Photos from events, projects and community visits by ${name}.` },
-        { route: "/contact", title: `Contact | ${name}`, desc: `Send a question, idea or invitation to ${name} and his office.` },
+        { route: "/gallery", title: `Gallery | ${name}`, desc: `Photos and videos from events, projects and community visits by ${name}.` },
+        { route: "/contact", title: `Contact | ${name}`, desc: `Send a question, idea or invitation to ${name} and her office.` },
       ];
 
       const template = fs.readFileSync(path.join(outDir, "index.html"), "utf8");
       const jsonLd = JSON.stringify({
         "@context": "https://schema.org",
         "@graph": [
-          { "@type": "Person", name, jobTitle: `${role}, ${area}`, url: siteUrl },
+          { "@type": "Person", name, jobTitle: roleArea, url: siteUrl },
           { "@type": "WebSite", name, url: siteUrl },
         ],
       });

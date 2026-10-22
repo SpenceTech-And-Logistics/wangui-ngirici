@@ -5,7 +5,7 @@ export default {
   role: "Former Woman Representative, Kirinyaga County",
   aspiration: "Aspirant for Governor, Kirinyaga 2027",
   area: "Kirinyaga County",
-  siteUrl: "https://example.com", // replace with the real domain before deploying
+  siteUrl: "https://wangui-ngirici.spencetechandlogistics.workers.dev", // change to the real domain when there is one
   theme: { primary: "#11332B", accent: "#E4682E" },
   // Firebase web-app values (README step 1). Leave empty to preview with sample content.
   firebase: {

@@ -77,7 +77,7 @@ function Editor({ initial }) {
           <Field label="Area served"><input value={s.area} onChange={(e) => set("area", e.target.value)} maxLength={60} /></Field>
           <Field label="Party"><input value={s.party} onChange={(e) => set("party", e.target.value)} maxLength={40} /></Field>
           <Field label="Based in"><input value={s.basedIn} onChange={(e) => set("basedIn", e.target.value)} maxLength={60} /></Field>
-          <Field label="Opening sentence" wide hint="Shown under his name on the Profile page and in Google results."><textarea rows={3} value={s.intro} onChange={(e) => set("intro", e.target.value)} maxLength={300} /></Field>
+          <Field label="Opening sentence" wide hint="Shown under her name on the Profile page and in Google results."><textarea rows={3} value={s.intro} onChange={(e) => set("intro", e.target.value)} maxLength={300} /></Field>
           <Field label="Focus areas" wide hint="One per line."><textarea rows={3} value={s.focus.join("\n")} onChange={(e) => set("focus", lines(e.target.value))} /></Field>
           <ImageField label="Portrait" value={s.heroImage} onChange={(v) => set("heroImage", v)} maxSide={1000} />
           <ImageField label="Wide photo behind the quote" value={s.wideImage} onChange={(v) => set("wideImage", v)} maxSide={1500} />

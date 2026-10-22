@@ -1,0 +1,10 @@
+// Cloudflare Workers deployment: serve the built site from dist/ (run `npm run build` first).
+// Unknown paths fall back to index.html so links like /work#project-... and /admin/... work on refresh.
+{
+  "name": "wangui-ngirici",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
